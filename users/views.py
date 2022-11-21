@@ -26,7 +26,7 @@ class RegistrationView(APIView):
       
 class LoginView(APIView):
     def post(self, request):
-        a = request.data.dict() 
+        a = request.data
         if 'email' not in a or 'password' not in a:
             return Response({'msg': 'Credentials missing'}, status=status.HTTP_400_BAD_REQUEST)
         email = a['email']
@@ -59,11 +59,11 @@ class ChangePasswordView(APIView):
         
 
 class UserList(viewsets.ModelViewSet):
-
+    permission_classes = [IsAuthenticated, ]
     queryset = MyUser.objects.all()
     serializer_class = UserSerializer
 
 class Product_List(viewsets.ModelViewSet):
-
+    permission_classes = [IsAuthenticated, ]
     queryset = Item.objects.all()
     serializer_class = PostSerializer
