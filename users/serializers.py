@@ -41,7 +41,20 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
 
-class PostSerializer(serializers.ModelSerializer):
+# class PostSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Item
+#         fields = ['title', 'brand', 'price', 'discount_price', 'image']
+
+
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = ('id', 'brand', 'is_active')
+
+class PostSerializer(serializers.HyperlinkedModelSerializer):
+    brand = BrandSerializer(many=True, read_only=True)
+
     class Meta:
         model = Item
         fields = ['title', 'brand', 'price', 'discount_price', 'image']

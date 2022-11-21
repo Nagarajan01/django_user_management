@@ -64,6 +64,5 @@ class UserList(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 class Product_List(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, ]
     queryset = Item.objects.all()
     serializer_class = PostSerializer
