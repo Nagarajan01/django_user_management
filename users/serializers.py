@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MyUser
+from .models import MyUser, Item, Brand
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -40,3 +40,9 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}
         }
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = "__all__"
+        depth = 1 

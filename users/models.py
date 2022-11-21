@@ -82,3 +82,29 @@ class MyUser(AbstractBaseUser):
     def is_out_of_credits(self):
         return self.credits > 0
 
+class Brand(models.Model):
+    # BRAND_CHOICE = (
+    #     ('Apple', 'Apple'),
+    #     ('Asus', 'Asus'),
+    #     ('Oneplus', 'Oneplus'),
+    #     ('Samsung', 'Samsung')
+    # )
+    brand = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.brand
+
+
+class Item(models.Model):
+    title = models.CharField(max_length=100)
+    price = models.FloatField()
+    discount_price = models.FloatField(blank=True, null=True)
+    brand = models.ManyToManyField(Brand, max_length=100)
+    image = models.ImageField(upload_to='images')
+    in_stock = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
+
+        

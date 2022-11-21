@@ -4,12 +4,12 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 from django import forms
-from .models import MyUser
+from .models import MyUser, Brand, Item
 
 
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Password confirm ation', widget=forms.PasswordInput)
 
     class Meta:
         model = MyUser
@@ -66,3 +66,13 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 admin.site.register(MyUser, UserAdmin)
+
+admin.site.register(Brand)
+
+
+class item(admin.ModelAdmin):
+    list_display = ('id', 'title', 'price',
+                    'discount_price', 'image', 'in_stock')
+
+
+admin.site.register(Item, item)
