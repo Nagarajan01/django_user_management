@@ -44,5 +44,4 @@ class UserSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = "__all__"
-        depth = 1 
+        fields = ['title', 'brand', 'price', 'discount_price', 'image']

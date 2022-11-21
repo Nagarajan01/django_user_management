@@ -21,3 +21,4 @@ urlpatterns = [
     path('accounts/change-password', ChangePasswordView.as_view(), name='register'),
     path('accounts/token-refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]+router.urls
+
