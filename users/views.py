@@ -80,7 +80,7 @@ class Product_List(viewsets.ModelViewSet):          # >>> List of products
     serializer_class = ProductSerializer
 
 
-class Cart(viewsets.ModelViewSet):                  # >>> List of Cart using get method
+class Cart(viewsets.ModelViewSet):                  # >>> List of Cart( get method ) & delete product from cart
     permission_classes = [IsAuthenticated, ]
     queryset = CartItem.objects.all()
     serializer_class = CartSerializer
