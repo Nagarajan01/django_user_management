@@ -7,6 +7,7 @@ from django.contrib.auth.models import (
 )
 from django.utils import timezone
 
+from datetime import datetime
 
 
 DISCOUNT_CODE_TYPES_CHOICES = [
@@ -83,14 +84,9 @@ class MyUser(AbstractBaseUser):
         return self.credits > 0
 
 class Brand(models.Model):
-    # BRAND_CHOICE = (
-    #     ('Apple', 'Apple'),
-    #     ('Asus', 'Asus'),
-    #     ('Oneplus', 'Oneplus'),
-    #     ('Samsung', 'Samsung')
-    # )
     brand = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
+    brand_image = models.ImageField(upload_to='brand',  default='default.jpg')
 
     def __str__(self):
         return self.brand
@@ -106,5 +102,36 @@ class Item(models.Model):
 
     def __str__(self):
         return self.title
+
+class CartItem(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=datetime.now)
+    product = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    total = models.IntegerField(default=0)
+    ordered = models.BooleanField(default=False)
+
+    choices = (
+        ('Received', 'Received'),
+        ('Scheduled', 'Scheduled'),
+        ('Shipped', 'Shipped'),
+        ('Failed', 'Failed'),
+        ('In Progress', 'In Progress'),
+    )
+
+    status = models.CharField(
+        max_length=100, choices=choices, default="In Progress")
+
+
+class Order(models.Model):
+
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    items = models.ManyToManyField(CartItem)
+    start_date = models.DateTimeField(auto_now_add=True)
+    total = models.IntegerField(default=0)
+    
+
+    def __str__(self):
+        return self.user.username
 
         

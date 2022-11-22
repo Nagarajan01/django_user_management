@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MyUser, Item, Brand
+from .models import MyUser, Item, Brand, CartItem, Order
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -22,7 +22,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-
 class PasswordChangeSerializer(serializers.Serializer):
     current_password = serializers.CharField(style={"input_type": "password"}, required=True)
     new_password = serializers.CharField(style={"input_type": "password"}, required=True)
@@ -41,20 +40,29 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
 
-# class PostSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Item
-#         fields = ['title', 'brand', 'price', 'discount_price', 'image']
-
-
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
-        fields = ('id', 'brand', 'is_active')
+        fields = ('id', 'brand', 'brand_image', 'is_active')
 
-class PostSerializer(serializers.HyperlinkedModelSerializer):
+class ProductSerializer(serializers.HyperlinkedModelSerializer):
     brand = BrandSerializer(many=True, read_only=True)
 
     class Meta:
         model = Item
         fields = ['title', 'brand', 'price', 'discount_price', 'image']
+
+class CartSerializer(serializers.ModelSerializer):
+    # product = serializers.HyperlinkedRelatedField(read_only=True)
+    # user = serializers.HyperlinkedRelatedField(read_only=True)
+    # product = ProductSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
+
+    class Meta: 
+        model = CartItem
+        fields = ['user', 'created_at', 'product', 'quantity', 'total', 'ordered']
+        extra_kwargs = {
+        }
+    
+        
+

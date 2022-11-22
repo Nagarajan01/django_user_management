@@ -11,9 +11,8 @@ from rest_framework import generics
 
 
 from .utils import get_tokens_for_user
-from .serializers import RegistrationSerializer, PasswordChangeSerializer, UserSerializer, PostSerializer
-from .models import MyUser, Item
-
+from .serializers import RegistrationSerializer, PasswordChangeSerializer, UserSerializer, ProductSerializer, CartSerializer
+from .models import MyUser, Item, CartItem
 class RegistrationView(APIView):
     def post(self, request):
         a = request.data
@@ -65,4 +64,10 @@ class UserList(viewsets.ModelViewSet):
 
 class Product_List(viewsets.ModelViewSet):
     queryset = Item.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = ProductSerializer
+
+class Cart(viewsets.ModelViewSet):
+    queryset = CartItem.objects.all()
+    serializer_class = CartSerializer
+    
+

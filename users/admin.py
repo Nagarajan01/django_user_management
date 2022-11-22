@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 from django import forms
-from .models import MyUser, Brand, Item
+from .models import MyUser, Brand, Item, CartItem, Order
 
 
 class UserCreationForm(forms.ModelForm):
@@ -76,3 +76,8 @@ class item(admin.ModelAdmin):
 
 
 admin.site.register(Item, item)
+
+admin.site.register(CartItem)
+
+admin.site.register(Order)
+

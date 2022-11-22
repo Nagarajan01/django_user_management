@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegistrationView, LoginView, LogoutView,ChangePasswordView, UserList, Product_List
+from .views import RegistrationView, LoginView, LogoutView,ChangePasswordView, UserList, Product_List, Cart
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
@@ -9,6 +9,12 @@ router.register(
 )
 router.register(
     'Product_List', Product_List
+)
+router.register(
+    'Product_List', Product_List
+)
+router.register(
+    'Cart_List', Cart
 )
 
 
