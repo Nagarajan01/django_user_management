@@ -9,7 +9,8 @@ from .models import MyUser, Brand, Item, CartItem, Order
 
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirm ation', widget=forms.PasswordInput)
+    password2 = forms.CharField(
+        label='Password confirm ation', widget=forms.PasswordInput)
 
     class Meta:
         model = MyUser
@@ -37,7 +38,8 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'password', 'date_of_birth', 'is_active', 'is_admin', 'credits')
+        fields = ('email', 'password', 'date_of_birth',
+                  'is_active', 'is_admin', 'credits')
 
     def clean_password(self):
         return self.initial["password"]
@@ -65,6 +67,7 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
     filter_horizontal = ()
 
+
 admin.site.register(MyUser, UserAdmin)
 
 admin.site.register(Brand)
@@ -77,7 +80,13 @@ class item(admin.ModelAdmin):
 
 admin.site.register(Item, item)
 
-admin.site.register(CartItem)
+
+class cartview(admin.ModelAdmin):
+    list_display = ('id', 'user', 'created_at', 'product',
+                    'quantity', 'total', 'ordered')
+
+
+admin.site.register(CartItem, cartview)
+
 
 admin.site.register(Order)
-

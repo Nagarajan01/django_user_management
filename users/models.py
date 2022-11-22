@@ -16,7 +16,6 @@ DISCOUNT_CODE_TYPES_CHOICES = [
 ]
 
 
-# Create your models here
 class MyUserManager(BaseUserManager):
     def create_user(self, email, date_of_birth, password=None):
         """
@@ -66,6 +65,7 @@ class MyUser(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['date_of_birth']
+
     def __str__(self):
         return self.email
 
@@ -82,6 +82,7 @@ class MyUser(AbstractBaseUser):
     @property
     def is_out_of_credits(self):
         return self.credits > 0
+
 
 class Brand(models.Model):
     brand = models.CharField(max_length=100)
@@ -102,6 +103,7 @@ class Item(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class CartItem(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
@@ -129,9 +131,6 @@ class Order(models.Model):
     items = models.ManyToManyField(CartItem)
     start_date = models.DateTimeField(auto_now_add=True)
     total = models.IntegerField(default=0)
-    
 
     def __str__(self):
         return self.user.username
-
-        

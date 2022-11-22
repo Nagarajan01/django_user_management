@@ -50,19 +50,14 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Item
-        fields = ['title', 'brand', 'price', 'discount_price', 'image']
+        fields = ['id', 'title', 'brand', 'price', 'discount_price', 'image']
 
 class CartSerializer(serializers.ModelSerializer):
-    # product = serializers.HyperlinkedRelatedField(read_only=True)
-    # user = serializers.HyperlinkedRelatedField(read_only=True)
-    # product = ProductSerializer(read_only=True)
+    product = ProductSerializer(read_only=True)
     user = UserSerializer(read_only=True)
 
     class Meta: 
         model = CartItem
-        fields = ['user', 'created_at', 'product', 'quantity', 'total', 'ordered']
+        fields = ['id', 'user', 'created_at', 'product', 'quantity', 'total', 'ordered']
         extra_kwargs = {
         }
-    
-        
-
