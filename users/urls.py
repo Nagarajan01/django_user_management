@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegistrationView, LoginView, LogoutView, ChangePasswordView, UserList, Product_List, Cart, AddtoCartItemView
+from .views import RegistrationView, LoginView, LogoutView, ChangePasswordView, UserList, Product_List, Cart, View_Wishlist
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
@@ -13,7 +13,9 @@ router.register(
 router.register(
     'Cart_List', Cart
 )
-
+router.register(
+    'View_Wishlist', View_Wishlist  
+)
 
 app_name = 'users'
 
@@ -24,7 +26,8 @@ urlpatterns = [
     path('accounts/change-password', ChangePasswordView.as_view(), name='register'),
     path('accounts/token-refresh/',
          jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    path('add_to_cart/<int:pk>/', AddtoCartItemView.as_view(),
-         name='AddtoCartItemView'),
-
 ]+router.urls
+
+
+
+#    path('wishlist/<int:pk>', Add_To_Wishlist.as_view(), name='wishlist'),

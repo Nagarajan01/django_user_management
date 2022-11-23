@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MyUser, Item, Brand, CartItem, Order
+from .models import MyUser, Item, Brand, CartItem, Order, Wishlist
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -61,3 +61,19 @@ class CartSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'created_at', 'product', 'quantity', 'total', 'ordered']
         extra_kwargs = {
         }
+
+class ProductListSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    cart = CartSerializer(read_only=True)
+    brand = BrandSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Item
+        fields = [ 'user', 'id', 'title', 'brand', 'price', 'discount_price', 'image', 'cart']
+
+class WishlistSerializer(serializers.HyperlinkedModelSerializer):
+    wished_item = ProductSerializer(read_only=True)
+
+    class Meta:
+        model = Wishlist
+        fields = ('id', 'wished_item')

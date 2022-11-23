@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum
-from django.db.models import Count, F, Value
+from django.db.models import Count, F, Value, Q
 
 
 from rest_framework import status, viewsets
@@ -18,8 +18,8 @@ import json
 
 
 from .utils import get_tokens_for_user
-from .serializers import RegistrationSerializer, PasswordChangeSerializer, UserSerializer, ProductSerializer, CartSerializer
-from .models import MyUser, Item, CartItem
+from .serializers import RegistrationSerializer, PasswordChangeSerializer, UserSerializer, ProductSerializer, CartSerializer, ProductListSerializer, WishlistSerializer
+from .models import MyUser, Item, CartItem, Wishlist, Order
 
 
 class RegistrationView(APIView):
@@ -75,9 +75,24 @@ class UserList(viewsets.ModelViewSet):              # >>> List of users
     serializer_class = UserSerializer
 
 
-class Product_List(viewsets.ModelViewSet):          # >>> List of products
+class Product_List(viewsets.ModelViewSet):          # >>> List of products & add product to cart
+    permission_classes = [IsAuthenticated, ] 
+
     queryset = Item.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = ProductListSerializer
+
+    def post(self, request, *args, **kwargs):
+        items = get_object_or_404(Item, id=self.kwargs.get('pk'))
+        if items.discount_price < items.price:
+            ncart = CartItem.objects.create(user=request.user, product=items)
+            ncart.total = ncart.quantity * items.discount_price
+            ncart.save()
+        else:
+            ncart = CartItem.objects.create(user=request.user, product=items)
+            ncart.total = ncart.quantity * items.price
+            ncart.save()
+        data = json.dumps(ncart, default=str, indent=1)
+        return Response({'msg': 'Product Added to Cart Successfully'}, status=status.HTTP_200_OK)
 
 
 class Cart(viewsets.ModelViewSet):                  # >>> List of Cart( get method ) & delete product from cart
@@ -94,25 +109,72 @@ class Cart(viewsets.ModelViewSet):                  # >>> List of Cart( get meth
         return Response({"message": "Item deleted successfully"})
 
 
-class AddtoCartItemView(generics.ListCreateAPIView):  # >>> Add to cart method
+    
+class View_Wishlist(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, ] 
-    queryset = CartItem.objects.all()
+    queryset = Wishlist.objects.all()
+    serializer_class = WishlistSerializer
 
-    serializer_class = CartSerializer
+    
+    def get(self):
+        return Wishlist.objects.filter(user=self.request.user)
 
-    def post(self, request, pk):
-        query = Item.objects.get(id=pk, in_stock=True)
-        items = get_object_or_404(Item, id=self.kwargs.get('pk'))
-        print(items.price, items.discount_price)
-        if items.discount_price < items.price:
-            ncart = CartItem.objects.create(user=request.user, product=items)
-            ncart.total = ncart.quantity * items.discount_price
-            ncart.save()
-        else:
-            ncart = CartItem.objects.create(user=request.user, product=items)
-            ncart.total = ncart.quantity * items.price
-            ncart.save()
-        data = json.dumps(ncart, default=str, indent=1)
-        return Response({'msg': 'Product Added to Cart Successfully'}, status=status.HTTP_200_OK)
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response({"message": "Item deleted in Wishlist successfully"})
+    
+    def post(self, request, *args, **kwargs):
+        query = Item.objects.get(id=kwargs['pk'])
+        print(query)
+        created = Wishlist.objects.get_or_create(user=request.user, wished_item=query)
+        return Response({"message": "Item added to wishlist successfully"})
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# class AddtoCartItemView(generics.ListCreateAPIView):  # >>> Add to cart method
+#     permission_classes = [IsAuthenticated, ] 
+#     queryset = CartItem.objects.all()
+
+#     serializer_class = CartSerializer
+
+#     def post(self, request, pk):
+#         query = Item.objects.get(id=pk, in_stock=True)
+#         items = get_object_or_404(Item, id=self.kwargs.get('pk'))
+#         print(items.price, items.discount_price)
+#         if items.discount_price < items.price:
+#             ncart = CartItem.objects.create(user=request.user, product=items)
+#             ncart.total = ncart.quantity * items.discount_price
+#             ncart.save()
+#         else:
+#             ncart = CartItem.objects.create(user=request.user, product=items)
+#             ncart.total = ncart.quantity * items.price
+#             ncart.save()
+#         data = json.dumps(ncart, default=str, indent=1)
+#         return Response({'msg': 'Product Added to Cart Successfully'}, status=status.HTTP_200_OK)
     
     
+
+
+
+# class Add_To_Wishlist(generics.ListCreateAPIView):
+#     permission_classes = [IsAuthenticated, ] 
+#     serializer_class = WishlistSerializer
+#     queryset = Wishlist.objects.all()
+
+#     def post(self, request, *args, **kwargs):
+#         query = Item.objects.get(id=kwargs['pk'])
+#         created = Wishlist.objects.get_or_create(user=request.user, wished_item=query)
+#         return Response({"message": "Item added to wishlist successfully"})
