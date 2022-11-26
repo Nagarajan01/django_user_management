@@ -129,7 +129,6 @@ class View_Wishlist(viewsets.ModelViewSet):
         print(query)
         created = Wishlist.objects.get_or_create(user=request.user, wished_item=query)
         return Response({"message": "Item added to wishlist successfully"})
-  
 
 
 

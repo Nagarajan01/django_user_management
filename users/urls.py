@@ -19,6 +19,7 @@ router.register(
 
 app_name = 'users'
 
+
 urlpatterns = [
     path('accounts/register', RegistrationView.as_view(), name='register'),
     path('accounts/login', LoginView.as_view(), name='register'),
