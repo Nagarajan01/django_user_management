@@ -69,6 +69,10 @@ docker logs pp-web-1 -tf  # for API logs
 docker logs pp-celery-beat-1 -tf  # for background process logs
 ```
 
+Create superuser for admin access
+```bash
+sudo docker exec -it <container_name_or_id> python manage.py createsuperuser
+```
 
 ## Example Data Retrieval Using the Django Shell
 
@@ -137,4 +141,54 @@ To start the development server and make your Django application accessible on a
 ```bash
 python manage.py runserver <your-desired-ip>:8000
 ```
+
+## Quick Setup Instructions
+
+Follow these steps to set up the project:
+
+```shell
+# Step 1: Clone the repository
+git clone https://github.com/milehighideas/pp.git
+
+# Step 2: Pull the latest changes from the "feature/product" branch
+git checkout -b feature/product origin feature/product
+
+# Step 3: Create a .env file using the sample data in .env_sample
+
+# Step 4: Build and run the Docker containers in detached mode
+sudo docker-compose up --build -d
+
+# Step 5:
+Get the docker container_name_or_id by below comment:
+    sudo docker ps
+Create a superuser to access the admin page
+    sudo docker exec -it <container_name_or_id> python manage.py createsuperuser
+
+# Step 6: Generate an API token for authentication
+sudo docker exec -it <container_name_or_id> python manage.py shell
+
+    from django.contrib.auth.models import User
+    from rest_framework.authtoken.models import Token
+    
+    user, created = User.objects.get_or_create(username="admin-p")
+    if created:
+        # Set a password for the user if necessary
+        user.set_password("your_password_here")
+        user.save()
+    
+    token, created = Token.objects.get_or_create(user=user)
+    print(token.key) # this token will be paste in below comment of <your_generated_token>
+
+```
+  Now you can use the generated token to make API requests:
+  
+  ```bash
+  curl -X GET -H "Authorization: Token <your_generated_token>" "http://52.12.64.222/api/products/?UPC=&ManufacturerPartNumber=AAC17-22G5"
+  ```
+
+  Make sure to replace <container_name_or_id> and <your_generated_token> with the appropriate values.
+
+
+
+
 
